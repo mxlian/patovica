@@ -26,18 +26,22 @@ wiringpi.pwmSetRange(2000)
 def servoControl(open=False):
     if open:
         print 'opening...'
-	wiringpi.pwmWrite(PIN_PWM,235)
+        wiringpi.pwmWrite(PIN_PWM,235)
     else:
         wiringpi.pwmWrite(PIN_PWM,53)
         print 'closing...'
     sleep(3)
 
-servoControl(open=True)
 timeout = 120
-# Wait until door opens or timeout
-while wiringpi.digitalRead(PIN_DOOR) == 0 and timeout > 0:
-    timeout -= 1
-    sleep(1)
+try:
+    servoControl(open=True)	
+    # Wait until door opens or timeout
+    while wiringpi.digitalRead(PIN_DOOR) == 0 and timeout > 0:
+        timeout -= 1
+        sleep(1)
+    sleep(2)
 
-sleep(2)
+except KeyboardInterrupt:  # Catch this to close the door if Ctrl+C
+    pass
+
 servoControl(open=False)

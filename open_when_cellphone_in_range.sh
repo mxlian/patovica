@@ -1,8 +1,11 @@
 #!/bin/bash
 
+OPENDOR_BIN="python ./opendoor.py"
+PING_DEBUG=/tmp/pingdebug.log
+
 while true; do
     ((count = 4))                
-    while [[ $count -ne 0 ]] && ! ping -c 1 192.168.1.54 >/tmp/pingdebug.log; do
+    while [[ $count -ne 0 ]] && ! ping -c 1 192.168.1.54 >$PING_DEBUG; do
         ((count = count - 1)) 
         sleep 1
         echo "$count"
@@ -13,12 +16,12 @@ while true; do
         sleep 1
         continue
     fi
-    echo "$(date): long time gone, if appears i will open it right away"
 
-    while ! ping -c 1 192.168.1.54 > /tmp/pingdebug.log; do
+    echo "$(date): long time gone, if appears i will open it right away"
+    while ! ping -c 1 192.168.1.54 >$PING_DEBUG; do
         sleep 1
     done
 
     echo "$(date): found, calling servo control..."
-    python /root/pwm.py 
+    $OPENDOR_BIN
 done
